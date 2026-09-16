@@ -8,11 +8,29 @@ Une fois GitHub Pages activé sur ce dépôt (voir plus bas), le site est access
 
 `https://<ton-nom-utilisateur-github>.github.io/<nom-du-depot>/`
 
-## Mettre à jour les offres
+## Recherche automatique
 
-Le contenu (liste des offres) est stocké dans le fichier `index.html`, dans un bloc `<script type="application/json" id="state-data">`. Pour ajouter/modifier une offre, il suffit d'éditer ce bloc JSON puis de pousser (commit + push) la nouvelle version — GitHub Pages se met à jour automatiquement en 1-2 minutes.
+Une recherche d'offres tourne **tous les jours à 2h du matin (heure de Paris)**. Elle balaie les sites d'emploi et les portails carrières, ne garde que ce qui correspond au profil, ajoute les nouvelles offres à `index.html`, pousse sur `main` (GitHub Pages republie tout seul dans la foulée) et envoie un e-mail récapitulatif à Chloé.
+
+Le protocole complet — profil visé, sources, règles de sélection, format des offres — est dans [`RECHERCHE-AUTO.md`](RECHERCHE-AUTO.md). C'est ce fichier qu'il faut modifier pour changer les critères de recherche (nouvelle ville, nouveau type de poste, source à ajouter).
+
+Une nuit sans nouvelle offre est normale : rien n'est commité ce jour-là, et l'e-mail le dit.
+
+## Mettre à jour les offres à la main
+
+Le contenu (liste des offres) est stocké dans `index.html`, dans un bloc `<script type="application/json" id="state-data">`. Ce fichier fait plus de 400 ko : mieux vaut ne pas l'éditer à la main mais passer par les scripts fournis.
+
+```bash
+# ajouter une ou plusieurs offres décrites dans un tableau JSON
+node tools/ajouter-offres.mjs mes-offres.json
+
+# vérifier que tout est valide (schéma, catégories, doublons) avant de commiter
+node tools/verifier-offres.mjs
+```
+
+Puis commit + push : GitHub Pages se met à jour en 1-2 minutes.
 
 ## Important
 
-- Ce site ne se met PAS à jour tout seul (pas de recherche automatique d'offres pour l'instant). Il faut republier une nouvelle version d'`index.html` à chaque fois qu'on veut ajouter des offres.
-- Aucune donnée n'est envoyée nulle part : tout tourne dans le navigateur de la personne qui consulte la page.
+- Aucune donnée n'est envoyée nulle part depuis la page : tout tourne dans le navigateur de la personne qui la consulte.
+- Les cases « candidature envoyée » cochées sur le site ne sont enregistrées que si la page est ouverte comme Artifact ; sur GitHub Pages, elles sont perdues au rechargement.
