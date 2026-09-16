@@ -154,6 +154,11 @@ CDI en priorité ; CDD long et missions de conseil acceptés.
 
 ## Les deux supports de publication
 
+**Ordre impératif : l'Artifact d'abord, le dépôt ensuite.** L'Artifact est le support que
+Chloé consulte ; l'accès en écriture au dépôt depuis une session programmée n'est pas
+garanti (voir « Limite connue » plus bas). Une publication ratée sur le dépôt ne doit
+jamais empêcher la mise à jour de l'Artifact ni l'envoi de l'e-mail.
+
 Les offres vivent dans un bloc `<script type="application/json" id="state-data">` à
 l'intérieur d'un `index.html` autonome. Ce fichier existe en **deux exemplaires**, et les
 nouvelles offres vont dans les deux :
@@ -175,20 +180,25 @@ toucher au reste du fichier.
 ## Déroulé d'une exécution
 
 ```bash
-git pull origin main                          # repartir du site à jour
-node tools/verifier-offres.mjs                # état de départ + offres déjà publiées
 # … recherche, puis rédaction des offres retenues dans /tmp/nouvelles-offres.json …
 
-# 1. dépôt GitHub
+# 1. Artifact — le support de Chloé, à faire EN PREMIER
+#    (Artifact action "read" donne le chemin du HTML téléchargé)
+node tools/ajouter-offres.mjs /tmp/nouvelles-offres.json /chemin/vers/artifact.html
+node tools/verifier-offres.mjs /chemin/vers/artifact.html
+#    puis Artifact action "publish" (voir ci-dessus)
+
+# 2. Dépôt GitHub — au mieux, sans bloquer si ça échoue
+git pull origin main
 node tools/ajouter-offres.mjs /tmp/nouvelles-offres.json
 node tools/verifier-offres.mjs                # doit afficher ✓ avant tout commit
 git add index.html && git commit -m "Recherche du AAAA-MM-JJ : N nouvelle(s) offre(s)"
 git push -u origin main
-
-# 2. Artifact (le script marche aussi sur le HTML téléchargé de l'artifact)
-node tools/ajouter-offres.mjs /tmp/nouvelles-offres.json /chemin/vers/artifact.html
-node tools/verifier-offres.mjs /chemin/vers/artifact.html
 ```
+
+Si les scripts `tools/` ne sont pas accessibles (dépôt non clonable depuis la session),
+manipuler le JSON du bloc `state-data` directement, en n'ajoutant que des entrées et sans
+jamais toucher aux existantes ni au reste du fichier.
 
 Pour republier l'Artifact : outil `Artifact`, action `publish`, `file_path` vers le HTML
 modifié, `url` = l'URL de l'artifact ci-dessus, et **obligatoirement**
@@ -198,6 +208,17 @@ artifact, sample, downloads ; les omettre les conserve) ni `favicon`.
 
 Si aucune offre n'est retenue : ne rien commiter et ne rien republier (pas de commit
 vide, pas de bump de `lastUpdated` pour faire joli).
+
+## Limite connue : l'accès au dépôt
+
+Les sessions programmées ne tournent pas forcément dans un environnement où le dépôt
+GitHub est clonable et poussable — `add_repo` peut être indisponible et `git push` peut
+être refusé. Ce n'est pas une raison de s'arrêter :
+
+- l'Artifact et l'e-mail ne dépendent pas du dépôt, ils passent en premier ;
+- si l'accès au dépôt échoue, **le noter dans l'e-mail** en une ligne (« le miroir GitHub
+  n'a pas pu être mis à jour cette nuit ») plutôt que d'échouer en silence ;
+- ne jamais réessayer en boucle : un échec constaté, on note et on continue.
 
 ## E-mail récapitulatif
 
