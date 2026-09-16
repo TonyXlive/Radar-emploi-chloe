@@ -10,7 +10,7 @@ Une fois GitHub Pages activé sur ce dépôt (voir plus bas), le site est access
 
 ## Recherche automatique
 
-Une recherche d'offres tourne **tous les jours à 2h du matin (heure de Paris)**. Elle balaie les sites d'emploi et les portails carrières, ne garde que ce qui correspond au profil, ajoute les nouvelles offres à `index.html`, pousse sur `main` (GitHub Pages republie tout seul dans la foulée) et envoie un e-mail récapitulatif à Chloé.
+Une recherche d'offres tourne **tous les jours à 2h du matin (heure de Paris)**. Elle balaie les sites d'emploi et les portails carrières en rotation, vérifie que chaque annonce est encore ouverte, ne garde que ce qui correspond au profil, puis publie les nouvelles offres sur les **deux** supports — ce dépôt (branche `main`, republiée par GitHub Pages) et l'Artifact claude.ai que Chloé utilise au quotidien — et lui envoie un e-mail récapitulatif.
 
 Le protocole complet — profil visé, sources, règles de sélection, format des offres — est dans [`RECHERCHE-AUTO.md`](RECHERCHE-AUTO.md). C'est ce fichier qu'il faut modifier pour changer les critères de recherche (nouvelle ville, nouveau type de poste, source à ajouter).
 
