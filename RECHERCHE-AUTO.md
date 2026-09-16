@@ -207,7 +207,10 @@ tutoyant, et **dans tous les cas** — même une nuit sans rien :
 - objet : `Radar Emploi — recherche du JJ/MM : N nouvelle(s) offre(s)`
 - une entrée par offre ajoutée : intitulé, entreprise, ville, contrat, salaire, lien
   cliquable, et une ou deux phrases sur le match et le bémol ;
-- le lien vers son site ;
+- **le lien vers l'Artifact** (voir plus haut) — c'est sa version, celle où ses cases
+  « postulé » sont enregistrées. Ne pas lui présenter le lien GitHub Pages comme
+  l'endroit où son suivi est gardé : sur cette version-là, les cases cochées sont
+  perdues au rechargement ;
 - les sources/entreprises couvertes cette nuit (pour qu'elle voie la rotation) ;
 - si rien n'a été trouvé : une phrase, sans dramatiser — c'est normal, il y a un nouveau
   passage demain.
