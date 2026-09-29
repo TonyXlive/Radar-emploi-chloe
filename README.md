@@ -10,7 +10,9 @@ Une fois GitHub Pages activé sur ce dépôt (voir plus bas), le site est access
 
 ## Recherche automatique
 
-Une recherche d'offres tourne **tous les jours à 2h du matin (heure de Paris)**. Elle balaie les sites d'emploi et les portails carrières en rotation, vérifie que chaque annonce est encore ouverte, ne garde que ce qui correspond au profil, puis publie les nouvelles offres sur les **deux** supports — ce dépôt (branche `main`, republiée par GitHub Pages) et l'Artifact claude.ai que Chloé utilise au quotidien — et lui envoie un e-mail récapitulatif.
+Une recherche d'offres tourne **tous les jours à 2h du matin (heure de Paris)**. Elle balaie Indeed puis les autres sites d'emploi et portails carrières en rotation, vérifie que chaque annonce est encore ouverte, ne garde que ce qui correspond au profil, publie les nouvelles offres sur l'Artifact claude.ai que Chloé utilise au quotidien, et lui envoie un e-mail récapitulatif.
+
+**Le site de ce dépôt n'est plus mis à jour par la veille.** La liste vivante est celle de l'Artifact, seule version où les cases « candidature envoyée » sont conservées. Ce dépôt garde le protocole et les scripts ; son `index.html` est un instantané.
 
 Le protocole complet — profil visé, sources, règles de sélection, format des offres — est dans [`RECHERCHE-AUTO.md`](RECHERCHE-AUTO.md). C'est ce fichier qu'il faut modifier pour changer les critères de recherche (nouvelle ville, nouveau type de poste, source à ajouter).
 
@@ -28,9 +30,9 @@ node tools/ajouter-offres.mjs mes-offres.json
 node tools/verifier-offres.mjs
 ```
 
-Puis commit + push : GitHub Pages se met à jour en 1-2 minutes.
+Les scripts fonctionnent aussi bien sur le `index.html` du dépôt que sur le HTML téléchargé de l'Artifact : `node tools/ajouter-offres.mjs mes-offres.json /chemin/vers/artifact.html`.
 
 ## Important
 
 - Aucune donnée n'est envoyée nulle part depuis la page : tout tourne dans le navigateur de la personne qui la consulte.
-- Les cases « candidature envoyée » cochées sur le site ne sont enregistrées que si la page est ouverte comme Artifact ; sur GitHub Pages, elles sont perdues au rechargement.
+- Les cases « candidature envoyée » ne sont enregistrées que sur l'Artifact. Sur une copie servie en statique, elles sont perdues au rechargement.

@@ -168,25 +168,18 @@ Sciences, Alten, Akkodis, Adecco Medical & Science.
 
 CDI en priorité ; CDD long et missions de conseil acceptés.
 
-## Les deux supports de publication
-
-**Ordre impératif : l'Artifact d'abord, le dépôt ensuite.** L'Artifact est le support que
-Chloé consulte ; l'accès en écriture au dépôt depuis une session programmée n'est pas
-garanti (voir « Limite connue » plus bas). Une publication ratée sur le dépôt ne doit
-jamais empêcher la mise à jour de l'Artifact ni l'envoi de l'e-mail.
+## Le support de publication : l'Artifact
 
 Les offres vivent dans un bloc `<script type="application/json" id="state-data">` à
-l'intérieur d'un `index.html` autonome. Ce fichier existe en **deux exemplaires**, et les
-nouvelles offres vont dans les deux :
+l'intérieur d'un `index.html` autonome, publié comme Artifact :
+**https://claude.ai/code/artifact/69ec8aa5-b4cd-464a-802e-30ec05150b4f**
 
-1. **Le dépôt GitHub** `tonyxlive/radar-emploi-chloe`, branche `main`, publié par GitHub
-   Pages sur https://tonyxlive.github.io/Radar-emploi-chloe/ — c'est l'archive durable.
-2. **L'Artifact** https://claude.ai/code/artifact/69ec8aa5-b4cd-464a-802e-30ec05150b4f —
-   c'est la version que Chloé utilise au quotidien, la seule où ses cases « postulé »
-   sont réellement enregistrées.
+C'est le seul support à mettre à jour. C'est la version que Chloé consulte, et la seule
+où ses cases « postulé » sont réellement enregistrées.
 
-Les deux exemplaires divergent forcément sur le champ `applied` : c'est normal et sans
-importance, tant qu'on n'y touche jamais.
+Le dépôt GitHub n'est plus une cible de publication. Il reste la maison de ce protocole
+et des scripts `tools/` ; le site qu'il contient est un instantané figé et ne reflète
+plus la liste courante. Ne pas chercher à le mettre à jour pendant une exécution.
 
 `index.html` fait plus de 400 ko (la bibliothèque PDF y est embarquée, sans elle les
 boutons CV cassent) : **ne jamais l'éditer à la main**, toujours passer par
@@ -198,43 +191,24 @@ toucher au reste du fichier.
 ```bash
 # … recherche, puis rédaction des offres retenues dans /tmp/nouvelles-offres.json …
 
-# 1. Artifact — le support de Chloé, à faire EN PREMIER
-#    (Artifact action "read" donne le chemin du HTML téléchargé)
+# Artifact action "read" renvoie le chemin du HTML téléchargé localement
 node tools/ajouter-offres.mjs /tmp/nouvelles-offres.json /chemin/vers/artifact.html
-node tools/verifier-offres.mjs /chemin/vers/artifact.html
-#    puis Artifact action "publish" (voir ci-dessus)
-
-# 2. Dépôt GitHub — au mieux, sans bloquer si ça échoue
-git pull origin main
-node tools/ajouter-offres.mjs /tmp/nouvelles-offres.json
-node tools/verifier-offres.mjs                # doit afficher ✓ avant tout commit
-git add index.html && git commit -m "Recherche du AAAA-MM-JJ : N nouvelle(s) offre(s)"
-git push -u origin main
+node tools/verifier-offres.mjs /chemin/vers/artifact.html   # doit afficher ✓
+# puis Artifact action "publish"
 ```
 
-Si les scripts `tools/` ne sont pas accessibles (dépôt non clonable depuis la session),
-manipuler le JSON du bloc `state-data` directement, en n'ajoutant que des entrées et sans
-jamais toucher aux existantes ni au reste du fichier.
+Republier : outil `Artifact`, action `publish`, `file_path` vers le HTML modifié,
+`url` = l'URL de l'artifact ci-dessus, et **obligatoirement**
+`title="Radar Emploi R&D Pharma"` — sans ce paramètre la page est renommée d'après le
+nom du fichier local dans la galerie de Chloé. Ne pas passer `capabilities` (déjà
+déclarées : artifact, sample, downloads ; les omettre les conserve) ni `favicon`.
 
-Pour republier l'Artifact : outil `Artifact`, action `publish`, `file_path` vers le HTML
-modifié, `url` = l'URL de l'artifact ci-dessus, et **obligatoirement**
-`title="Radar Emploi R&D Pharma"` — sans ce paramètre la page est renommée d'après le nom
-du fichier local dans la galerie de Chloé. Ne pas passer `capabilities` (déjà déclarées :
-artifact, sample, downloads ; les omettre les conserve) ni `favicon`.
+Si les scripts `tools/` ne sont pas accessibles depuis la session, manipuler le JSON du
+bloc `state-data` directement : n'ajouter que des entrées, ne jamais toucher aux
+existantes ni au reste du fichier.
 
-Si aucune offre n'est retenue : ne rien commiter et ne rien republier (pas de commit
-vide, pas de bump de `lastUpdated` pour faire joli).
-
-## Limite connue : l'accès au dépôt
-
-Les sessions programmées ne tournent pas forcément dans un environnement où le dépôt
-GitHub est clonable et poussable — `add_repo` peut être indisponible et `git push` peut
-être refusé. Ce n'est pas une raison de s'arrêter :
-
-- l'Artifact et l'e-mail ne dépendent pas du dépôt, ils passent en premier ;
-- si l'accès au dépôt échoue, **le noter dans l'e-mail** en une ligne (« le miroir GitHub
-  n'a pas pu être mis à jour cette nuit ») plutôt que d'échouer en silence ;
-- ne jamais réessayer en boucle : un échec constaté, on note et on continue.
+Si aucune offre n'est retenue : ne rien republier (pas de bump de `lastUpdated` pour
+faire joli).
 
 ## E-mail récapitulatif
 
@@ -244,10 +218,7 @@ tutoyant, et **dans tous les cas** — même une nuit sans rien :
 - objet : `Radar Emploi — recherche du JJ/MM : N nouvelle(s) offre(s)`
 - une entrée par offre ajoutée : intitulé, entreprise, ville, contrat, salaire, lien
   cliquable, et une ou deux phrases sur le match et le bémol ;
-- **le lien vers l'Artifact** (voir plus haut) — c'est sa version, celle où ses cases
-  « postulé » sont enregistrées. Ne pas lui présenter le lien GitHub Pages comme
-  l'endroit où son suivi est gardé : sur cette version-là, les cases cochées sont
-  perdues au rechargement ;
+- le lien vers l'Artifact (voir plus haut), le seul support à lui communiquer ;
 - les sources/entreprises couvertes cette nuit (pour qu'elle voie la rotation) ;
 - si rien n'a été trouvé : une phrase, sans dramatiser — c'est normal, il y a un nouveau
   passage demain.
