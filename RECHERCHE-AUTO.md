@@ -134,9 +134,14 @@ Sciences, Alten, Akkodis, Adecco Medical & Science.
 5. **Pas d'enjolivement** : `reason` dit honnêtement pourquoi l'offre correspond *et* ce
    qui cloche (expérience trop élevée, métier à côté, déplacements, secteur limitrophe…).
    C'est ce qui rend le site utile.
-6. **Maximum 5 nouvelles offres par nuit.** Zéro est un résultat parfaitement valide :
+6. **Fraîcheur : pas d'annonce publiée il y a plus de 60 jours.** La date de publication
+   renvoyée par Indeed est un vrai signal, pas une information décorative. Au-delà de
+   60 jours, ne pas ajouter l'offre, sauf si la page de l'employeur confirme qu'elle est
+   toujours ouverte. Une annonce ancienne encore présente dans un flux n'est pas une
+   annonce ouverte.
+7. **Maximum 5 nouvelles offres par nuit.** Zéro est un résultat parfaitement valide :
    mieux vaut ne rien ajouter que de remplir le site de bruit.
-7. Écarter les annonces d'agences d'intérim sans employeur identifiable.
+8. Écarter les annonces d'agences d'intérim sans employeur identifiable.
 
 ## Catégories (champ `category`)
 
@@ -213,7 +218,11 @@ faire joli).
 ## E-mail récapitulatif
 
 Envoyé à **plltchloe@gmail.com** à la fin de chaque recherche, en français, en la
-tutoyant, et **dans tous les cas** — même une nuit sans rien :
+tutoyant, et **dans tous les cas** — même une nuit sans rien.
+
+L'e-mail est écrit pour Chloé, pas pour qui maintient la veille : **jamais de diagnostic
+technique** (connecteurs, nombre d'appels, erreurs, dédoublonnage). Ces éléments vont
+dans le résumé final de la session, et nulle part ailleurs. Contenu attendu :
 
 - objet : `Radar Emploi — recherche du JJ/MM : N nouvelle(s) offre(s)`
 - une entrée par offre ajoutée : intitulé, entreprise, ville, contrat, salaire, lien
