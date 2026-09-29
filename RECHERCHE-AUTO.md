@@ -25,10 +25,17 @@ coup. Pour éviter que ça se reproduise :
   nouveau passage demain — mieux vaut un petit lot bien vérifié qu'un blocage.
 - Une page lente, en erreur, ou un portail qui ne répond pas : **abandonner
   immédiatement**, ne jamais réessayer, passer à la source suivante.
-- **Ne jamais appeler un outil de connecteur qui demande une autorisation manuelle**
-  (`mcp__Indeed__*` notamment) : une exécution précédente est restée bloquée des heures
-  en attente d'une validation que personne ne pouvait donner à 2h du matin. La recherche
-  se fait avec **WebSearch et WebFetch uniquement**. Seule exception : l'envoi de
+- **Le connecteur Indeed est autorisé, mais borné.** Il renvoie le descriptif complet
+  d'une annonce et sa date de publication, ce qu'aucune recherche web ne donne de façon
+  fiable : c'est la meilleure source dont dispose cette veille. Règles d'usage :
+  **3 appels `mcp__Indeed__search_jobs` maximum** par nuit, puis `get_job_details`
+  seulement sur les offres réellement candidates. Si un appel ne revient pas tout de
+  suite, l'abandonner et basculer sur WebSearch, sans jamais réessayer.
+  Historique à ne pas rejouer : une exécution ancienne est restée bloquée des heures sur
+  une demande d'autorisation que personne ne pouvait donner à 2h du matin. Les sessions
+  de la routine tournent désormais en mode d'autorisation automatique, ce qui lève la
+  cause, mais la prudence reste : borner les appels et ne jamais attendre.
+- Tout autre connecteur reste hors de la recherche. Seule exception : l'envoi de
   l'e-mail final via Gmail, qui est la dernière étape — s'il bloque, plus rien n'est en
   attente derrière.
 
@@ -68,10 +75,19 @@ cas `salaryWarn: true` et le dire dans `reason`. Salaire non communiqué :
 
 ## Sources
 
-**A) Job boards** : LinkedIn (via WebSearch), Welcome to the Jungle, HelloWork, APEC,
-Cadremploi, Indeed (via WebSearch, pas via le connecteur), Jobijoba, Glassdoor, Wizbii.
+**A) Indeed, via le connecteur** — à faire en premier, c'est la source la plus rentable.
+`mcp__Indeed__search_jobs` avec `country_code: "FR"` et, en rotation sur les nuits,
+`location` = « Lyon, France », « Grenoble, France », « Bourgoin-Jallieu, France » ou
+« remote ». Requêtes utiles : « chef de projet R&D pharmaceutique », « project manager
+pharmaceutique », « chargé d'études cliniques », « chef de produit santé », « affaires
+médicales », « consultant industrie pharmaceutique ». Puis `get_job_details` sur les
+offres candidates : le descriptif complet permet de juger la séniorité demandée et de
+rédiger un `reason` honnête, et la date de publication sert de contrôle de fraîcheur.
 
-**B) Entreprises cibles** — liste donnée par Chloé (labos, biotech et medtech ayant des
+**B) Autres job boards** : LinkedIn (via WebSearch), Welcome to the Jungle, HelloWork,
+APEC, Cadremploi, Jobijoba, Glassdoor, Wizbii.
+
+**C) Entreprises cibles** — liste donnée par Chloé (labos, biotech et medtech ayant des
 sites ou filiales en Auvergne-Rhône-Alpes). **En faire tourner 12-15 par nuit**, avec des
 requêtes du type `"<entreprise>" recrutement Lyon OR Grenoble 2026` :
 
@@ -91,7 +107,7 @@ SATT Conectus, genOway, Alcimed, Groupe Lépine, Adocia, Fareva, Capgemini Engin
 > Ne jamais tenter l'API interne `/wday/cxs/...` : elle exige un POST, un GET échoue
 > systématiquement et fait perdre du temps.
 
-**C) Cabinets spécialisés** : Fed Pharma, Uptoo, Michael Page (santé/pharma), Hays Life
+**D) Cabinets spécialisés** : Fed Pharma, Uptoo, Michael Page (santé/pharma), Hays Life
 Sciences, Alten, Akkodis, Adecco Medical & Science.
 
 **Mots-clés** : « chef de projet R&D pharma », « project manager pharmaceutique »,
