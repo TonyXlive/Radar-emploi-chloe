@@ -28,7 +28,7 @@ coup. Pour éviter que ça se reproduise :
 - **Le connecteur Indeed est autorisé, mais borné.** Il renvoie le descriptif complet
   d'une annonce et sa date de publication, ce qu'aucune recherche web ne donne de façon
   fiable : c'est la meilleure source dont dispose cette veille. Règles d'usage :
-  **3 appels `mcp__Indeed__search_jobs` maximum** par nuit, puis `get_job_details`
+  **6 appels `mcp__Indeed__search_jobs` maximum** par nuit, puis `get_job_details`
   seulement sur les offres réellement candidates. Si un appel ne revient pas tout de
   suite, l'abandonner et basculer sur WebSearch, sans jamais réessayer.
   Historique à ne pas rejouer : une exécution ancienne est restée bloquée des heures sur
@@ -75,14 +75,32 @@ cas `salaryWarn: true` et le dire dans `reason`. Salaire non communiqué :
 
 ## Sources
 
-**A) Indeed, via le connecteur** — à faire en premier, c'est la source la plus rentable.
-`mcp__Indeed__search_jobs` avec `country_code: "FR"` et, en rotation sur les nuits,
-`location` = « Lyon, France », « Grenoble, France », « Bourgoin-Jallieu, France » ou
-« remote ». Requêtes utiles : « chef de projet R&D pharmaceutique », « project manager
-pharmaceutique », « chargé d'études cliniques », « chef de produit santé », « affaires
-médicales », « consultant industrie pharmaceutique ». Puis `get_job_details` sur les
-offres candidates : le descriptif complet permet de juger la séniorité demandée et de
-rédiger un `reason` honnête, et la date de publication sert de contrôle de fraîcheur.
+**A) Indeed, via le connecteur** — à faire en premier, c'est la source qui produit.
+Sur les passages observés, les offres retenues venaient d'Indeed, tandis que la
+recherche web sur les autres sites remontait surtout des annonces périmées.
+
+Chaque nuit : **6 recherches** `mcp__Indeed__search_jobs`, `country_code: "FR"`. Une
+session ne se souvient pas de la nuit précédente, donc la rotation ne se devine pas :
+elle se calcule. Prendre **le jour du mois modulo 4** et appliquer la ligne
+correspondante :
+
+| Jour mod 4 | Recherches de la nuit |
+|---|---|
+| 0 | Les 6 métiers ci-dessous, `location` « Lyon, France » |
+| 1 | Les 6 métiers, `location` « Grenoble, France » |
+| 2 | Les 6 métiers, `location` « Lyon, France » |
+| 3 | Métiers 1, 3, 5 à « Bourgoin-Jallieu, France » ; métiers 2, 4, 6 en « remote » |
+
+Lyon revient une nuit sur deux : c'est là que se concentre l'essentiel du marché, et
+les nouvelles annonces y paraissent chaque jour.
+
+Les 6 métiers : (1) « chef de projet R&D pharmaceutique », (2) « project manager
+pharmaceutique », (3) « chargé d'études cliniques », (4) « chef de produit santé »,
+(5) « affaires médicales », (6) « consultant industrie pharmaceutique ».
+
+Puis `get_job_details` sur les offres candidates seulement : le descriptif complet
+permet de juger la séniorité demandée et de rédiger un `reason` honnête, et la date de
+publication sert de contrôle de fraîcheur.
 
 **B) Autres job boards** : LinkedIn (via WebSearch), Welcome to the Jungle, HelloWork,
 APEC, Cadremploi, Jobijoba, Glassdoor, Wizbii.
